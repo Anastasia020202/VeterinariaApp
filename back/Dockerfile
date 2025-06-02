@@ -6,9 +6,6 @@ WORKDIR /src
 COPY ["back.csproj", "./"]
 RUN dotnet restore
 
-# Copia el archivo .env para cargar FRONT_URL
-COPY [".env", "./"]
-
 # Copia el resto del código fuente y publica la app
 COPY . .
 RUN dotnet publish -c Release -o /app/publish
@@ -16,9 +13,11 @@ RUN dotnet publish -c Release -o /app/publish
 # Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+
+# Copia los archivos publicados desde la etapa de build
 COPY --from=build /app/publish .
-# Copia .env para configuration en runtime
-COPY [".env", "."]
+
+# Configura el puerto y la URL de escucha
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
 

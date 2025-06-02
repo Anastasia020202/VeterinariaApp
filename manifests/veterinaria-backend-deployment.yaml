@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: veterinaria-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: veterinaria-backend
+  template:
+    metadata:
+      labels:
+        app: veterinaria-backend
+    spec:
+      containers:
+        - name: veterinaria-backend
+          image: anastasia829/veterinaria-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: FRONT_URL
+              value: http://veterinaria-frontend
+            - name: ConnectionStrings__DefaultConnection
+              value: Host=veterinariadb.cr98ixwxqiv5.us-east-1.rds.amazonaws.com;Port=5432;Username=postgres;Password=postgres;Database=veterinariadb
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: veterinaria-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: veterinaria-backend
+  ports:
+    - port: 80
+      targetPort: 80

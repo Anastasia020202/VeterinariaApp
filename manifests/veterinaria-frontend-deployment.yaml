@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: veterinaria-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: veterinaria-frontend
+  template:
+    metadata:
+      labels:
+        app: veterinaria-frontend
+    spec:
+      containers:
+        - name: veterinaria-frontend
+          image: anastasia829/veterinaria-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: veterinaria-frontend
+spec:
+  selector:
+    app: veterinaria-frontend
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 80
