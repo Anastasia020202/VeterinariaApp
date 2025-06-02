@@ -20,7 +20,7 @@ spec:
             - containerPort: 80
           env:
             - name: FRONT_URL
-              value: http://veterinaria-frontend
+              value: http://aa97933d649054bdcbb4a96718883b8f-1064600077.us-east-1.elb.amazonaws.com
             - name: ConnectionStrings__DefaultConnection
               value: Host=veterinariadb.cr98ixwxqiv5.us-east-1.rds.amazonaws.com;Port=5432;Username=postgres;Password=postgres;Database=veterinariadb
 
@@ -30,7 +30,7 @@ kind: Service
 metadata:
   name: veterinaria-backend
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: veterinaria-backend
   ports:

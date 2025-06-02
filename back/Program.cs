@@ -25,19 +25,23 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         )
     ));
 
-// Configurar CORS
+// ✅ Configurar CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         var origins = builder.Configuration["FRONT_URL"]?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
-        if (builder.Environment.IsDevelopment())
+
+        if (origins.Length > 0)
         {
-            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            policy.WithOrigins(origins)
+                  .SetIsOriginAllowedToAllowWildcardSubdomains()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
         }
         else
         {
-            policy.WithOrigins(origins)
+            policy.AllowAnyOrigin()
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         }
@@ -146,7 +150,7 @@ static async Task InitializeAdminUser(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-    
+
     var exists = await userManager.FindByEmailAsync("admin@veterinaria.com");
     if (exists == null)
     {
